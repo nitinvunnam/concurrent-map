@@ -144,5 +144,76 @@ private:
     static constexpr int MAX_SPINS = 64;
 };
 
+class RWLock{
+    public:
+        void lock(){
+            int expected = 0;
+            while(!state.compare_exchange_strong(expected,-1)){
+                expected = 0;
+            }
+        };
+        void unlock(){
+            state.store(0);
+        };
+        void lock_shared(){
+            while(true){
+                int readers = state.load();
+                if(readers < 0){
+                    continue;
+                }
+                if(state.compare_exchange_strong(readers, readers+1)){
+                    return;
+                }
+            }
+
+        };
+        void unlock_shared(){
+            state.fetch_sub(1);
+        };
+    private:
+        std::atomic<int> state{0};
+};
+
+class RWLockWP{
+    public:
+        void lock(){
+            waiting_writers.fetch_add(1);
+            int expected = 0;
+            while(!state.compare_exchange_strong(expected,-1)){
+                expected = 0;
+            }
+            waiting_writers.fetch_sub(1);
+        };
+        void unlock(){
+            state.store(0);
+        };
+        void lock_shared(){
+            while(true){
+                if(waiting_writers.load() == 0){
+                    int readers = state.load();
+                    if(readers < 0){
+                        continue;
+                    }
+                    if(state.compare_exchange_strong(readers, readers+1)){
+                        if(waiting_writers.load() == 0){
+                            return;
+                        }
+                        else{
+                            state.fetch_sub(1);
+                        }
+                    }
+                }
+            }
+        };
+        void unlock_shared(){
+            state.fetch_sub(1);
+        };
+
+    private:
+        std::atomic<int> state{0};
+        std::atomic<int> waiting_writers{0};
+
+
+};
 
 #endif /* LOCKS_H */
