@@ -52,7 +52,7 @@ class TASLock{
 class TTASLock{
     public:
     void lock(){
-        int backOff = 1;
+        int back_off = 1;
         while(true){
             while(locked_.load()){
                 __builtin_ia32_pause();
@@ -63,12 +63,12 @@ class TTASLock{
                 break;
             }
             
-            for(int i = 0; i < backOff; i++){
+            for(int i = 0; i < back_off; i++){
                 __builtin_ia32_pause();
             }
 
-            if(backOff < MAX_BACKOFF){
-                backOff*=2;
+            if(back_off < MAX_BACKOFF){
+                back_off*=2;
             };
         }
     };
@@ -79,6 +79,69 @@ class TTASLock{
     private:
         std::atomic <bool> locked_{false};
         const int MAX_BACKOFF = 64;
+};
+
+class TicketLock{
+    public:
+        void lock(){
+            int spins = 0;
+            int ticket = next_ticket.fetch_add(1);
+
+            while(ticket != curr_ticket.load()){
+                int cur = curr_ticket.load();
+                if(spins < MAX_SPINS && ticket - cur == 1){
+                    spins++;
+                    __builtin_ia32_pause();
+                    continue;
+                }
+                else{
+                    spins = 0;
+                    std::this_thread::yield();
+                }
+                
+            }
+        };
+        void unlock(){
+            curr_ticket.fetch_add(1);
+        };
+    private:
+        std::atomic <int> curr_ticket{0};
+        std::atomic <int> next_ticket{0};
+        static constexpr int MAX_SPINS = 64;
+
+};
+
+class ParkingLock {
+public:
+    void lock() {
+        int expected = 0;
+        if (state.compare_exchange_strong(expected, 1))
+            return;                                   // fast path
+
+        for (int i = 0; i < MAX_SPINS; i++) {
+            __builtin_ia32_pause();
+            expected = 0;
+            if (state.compare_exchange_strong(expected, 1))
+                return;
+        }
+
+        while (state.exchange(2) != 0)
+            state.wait(2);
+    }
+
+
+
+    void unlock() {
+        int old = state.exchange(0);
+
+        if (old == 2) {
+            state.notify_one();
+        }
+    }
+
+private:
+    std::atomic<int> state{0};
+    static constexpr int MAX_SPINS = 64;
 };
 
 
