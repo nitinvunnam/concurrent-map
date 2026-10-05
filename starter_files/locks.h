@@ -51,58 +51,55 @@ class TASLock{
 
 class TTASLock{
     public:
-    void lock(){
+        void lock() {
         int back_off = 1;
-        while(true){
-            while(locked_.load()){
-                __builtin_ia32_pause();
-            }
-            bool result = locked_.exchange(true);
 
-            if(!result){
-                break;
-            }
-            
-            for(int i = 0; i < back_off; i++){
+        while (true) {
+            while (locked_.load(std::memory_order_relaxed)) {
                 __builtin_ia32_pause();
             }
 
-            if(back_off < MAX_BACKOFF){
-                back_off*=2;
-            };
+            bool result = locked_.exchange(true, std::memory_order_acquire);
+
+            if (!result) {
+                return;
+            }
+
+            for (int i = 0; i < back_off; i++) {
+                __builtin_ia32_pause();
+            }
+
+            if (back_off < MAX_BACKOFF) {
+                back_off *= 2;
+            }
         }
-    };
-    void unlock(){
-        locked_.store(false);
-    };
+    }
 
+    void unlock() {
+        locked_.store(false, std::memory_order_release);
+    }
     private:
         std::atomic <bool> locked_{false};
-        const int MAX_BACKOFF = 64;
+        static constexpr int MAX_BACKOFF = 64;
 };
 
 class TicketLock{
     public:
         void lock(){
             int spins = 0;
-            int ticket = next_ticket.fetch_add(1);
-
-            while(ticket != curr_ticket.load()){
-                int cur = curr_ticket.load();
-                if(spins < MAX_SPINS && ticket - cur == 1){
-                    spins++;
-                    __builtin_ia32_pause();
-                    continue;
-                }
-                else{
+            int ticket = next_ticket.fetch_add(1, std::memory_order_relaxed);
+            while(ticket != curr_ticket.load(std::memory_order_relaxed)){  
+                spins++;              
+                if(spins > MAX_SPINS){
                     spins = 0;
                     std::this_thread::yield();
                 }
                 
             }
+            curr_ticket.load(std::memory_order_acquire);
         };
         void unlock(){
-            curr_ticket.fetch_add(1);
+            curr_ticket.fetch_add(1, std::memory_order_release);
         };
     private:
         std::atomic <int> curr_ticket{0};
@@ -116,17 +113,18 @@ public:
     void lock() {
         int expected = 0;
         if (state.compare_exchange_strong(expected, 1))
-            return;                                   // fast path
+            return;                                  
 
         for (int i = 0; i < MAX_SPINS; i++) {
             __builtin_ia32_pause();
             expected = 0;
-            if (state.compare_exchange_strong(expected, 1))
+            if (state.compare_exchange_strong(expected, 2))
                 return;
         }
 
-        while (state.exchange(2) != 0)
+        while (state.exchange(2) != 0){
             state.wait(2);
+        }
     }
 
 
