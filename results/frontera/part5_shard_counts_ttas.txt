@@ -1,0 +1,23 @@
+=== ttas, T=1 ===
+warm-up 128 ms
+sharded:ttas   T=1   shards=16   mix=80/10/10      5341184 ops    2000 ms      2.7 Mops/s
+warm-up 125 ms
+sharded:ttas   T=1   shards=64   mix=80/10/10      6120448 ops    2000 ms      3.1 Mops/s
+warm-up 110 ms
+sharded:ttas   T=1   shards=256  mix=80/10/10      6699008 ops    2000 ms      3.3 Mops/s
+warm-up 99 ms
+sharded:ttas   T=1   shards=1024 mix=80/10/10      7073792 ops    2000 ms      3.5 Mops/s
+warm-up 88 ms
+sharded:ttas   T=1   shards=4096 mix=80/10/10      8427520 ops    2000 ms      4.2 Mops/s
+
+=== ttas, T=32 ===
+warm-up 131 ms
+sharded:ttas   T=32  shards=16   mix=80/10/10     19435520 ops    2002 ms      9.7 Mops/s
+warm-up 121 ms
+sharded:ttas   T=32  shards=64   mix=80/10/10     69917696 ops    2002 ms     34.9 Mops/s
+warm-up 112 ms
+sharded:ttas   T=32  shards=256  mix=80/10/10    110258176 ops    2002 ms     55.1 Mops/s
+warm-up 103 ms
+sharded:ttas   T=32  shards=1024 mix=80/10/10    139785216 ops    2001 ms     69.8 Mops/s
+warm-up 85 ms
+sharded:ttas   T=32  shards=4096 mix=80/10/10    176292864 ops    2001 ms     88.1 Mops/s

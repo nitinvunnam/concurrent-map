@@ -1,0 +1,10 @@
+bash perfstat.sh ./bench hashed:ttas 1 4096 
+# perf stat -x, -D 1500 -e cycles,instructions,L1-dcache-load-misses,cache-misses -- taskset -c 0 ./bench hashed:ttas 1 4096 5
+warm-up 98 ms
+hashed:ttas    T=1   shards=4096 mix=80/10/10     12775424 ops    5000 ms      2.6 Mops/s
+event                                   count         per op
+cycles                            11952604243          935.6
+instructions                       1932664288          151.3
+L1-dcache-load-misses               209883074          16.43
+cache-misses                           879304        0.06883
+IPC (instructions/cycles)                              0.162

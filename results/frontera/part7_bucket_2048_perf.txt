@@ -1,0 +1,11 @@
+bash perfstat.sh ./bench hashed:ttas 1 4096 
+# perf stat -x, -D 1500 -e cycles,instructions,L1-dcache-load-misses,cache-misses -- taskset -c 0 ./bench hashed:ttas 1 4096 5
+warm-up 3136 ms
+perfstat: WARNING warm-up 3136 ms >= DELAY 1500 ms; the counts include the warm-up.  Rerun with DELAY=6272
+hashed:ttas    T=1   shards=4096 mix=80/10/10      1286144 ops    5001 ms      0.3 Mops/s
+event                                   count         per op
+cycles                            21945090515      1.706e+04
+instructions                       1670851510           1299
+L1-dcache-load-misses               296198468          230.3
+cache-misses                           297563         0.2314
+IPC (instructions/cycles)                              0.076

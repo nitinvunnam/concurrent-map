@@ -1,0 +1,10 @@
+warm-up 33 ms
+hashed:park    T=32  shards=16   mix=80/10/10      6964224 ops    2005 ms      3.5 Mops/s
+warm-up 33 ms
+hashed:park    T=32  shards=64   mix=80/10/10     17461248 ops    2002 ms      8.7 Mops/s
+warm-up 34 ms
+hashed:park    T=32  shards=256  mix=80/10/10     70344704 ops    2001 ms     35.1 Mops/s
+warm-up 33 ms
+hashed:park    T=32  shards=1024 mix=80/10/10    147674112 ops    2001 ms     73.8 Mops/s
+warm-up 33 ms
+hashed:park    T=32  shards=4096 mix=80/10/10    254132224 ops    2001 ms    127.0 Mops/s

@@ -1,0 +1,2 @@
+warm-up 593 ms
+hashed:ttas    T=1   shards=4096 mix=80/10/10      4259840 ops    5001 ms      0.9 Mops/s

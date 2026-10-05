@@ -1,0 +1,11 @@
+bash perfstat.sh ./bench sharded:tas 8 1 0-7
+# perf stat -x, -D 1500 -e cycles,instructions,L1-dcache-load-misses,mem_load_l3_hit_retired.xsnp_hitm,context-switches -- taskset -c 0-7 ./bench sharded:tas 8 1 5
+warm-up 138 ms
+sharded:tas    T=8   shards=1    mix=80/10/10      3777536 ops    5013 ms      0.8 Mops/s
+event                                   count         per op
+cycles                            96523964025      2.555e+04
+instructions                       1628177706            431
+L1-dcache-load-misses               152464209          40.36
+mem_load_l3_hit_retired.xsnp_hitm         37581074          9.949
+context-switches                           77      2.038e-05
+IPC (instructions/cycles)                              0.017

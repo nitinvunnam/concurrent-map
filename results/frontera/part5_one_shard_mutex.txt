@@ -1,0 +1,11 @@
+bash perfstat.sh ./bench sharded:mutex 8 1 0-7
+# perf stat -x, -D 1500 -e cycles,instructions,L1-dcache-load-misses,mem_load_l3_hit_retired.xsnp_hitm,context-switches -- taskset -c 0-7 ./bench sharded:mutex 8 1 5
+warm-up 140 ms
+sharded:mutex  T=8   shards=1    mix=80/10/10      3728384 ops    5004 ms      0.7 Mops/s
+event                                   count         per op
+cycles                            52678647728      1.413e+04
+instructions                      14020921737           3761
+L1-dcache-load-misses               382212331          102.5
+mem_load_l3_hit_retired.xsnp_hitm         38782941           10.4
+context-switches                      1600690         0.4293
+IPC (instructions/cycles)                              0.266

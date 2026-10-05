@@ -1,0 +1,2 @@
+warm-up 90 ms
+sharded:rwp    T=32  shards=4096 mix=roles    rd=101.3 wr=7.5 Mops/s     543946752 ops    5001 ms    108.8 Mops/s

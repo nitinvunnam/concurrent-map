@@ -1,0 +1,2 @@
+warm-up 145 ms
+sharded:shared_mutex T=32  shards=1    mix=roles    rd=1.9 wr=0.0 Mops/s       9513984 ops    5016 ms      1.9 Mops/s

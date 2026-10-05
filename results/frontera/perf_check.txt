@@ -1,0 +1,18 @@
+=== perf stat cycles ===
+
+ Performance counter stats for 'true':
+
+           6636626      cycles                                                      
+
+       0.006484601 seconds time elapsed
+
+       0.000000000 seconds user
+       0.002725000 seconds sys
+
+
+
+=== HITM events ===
+  mem_load_l3_hit_retired.xsnp_hit                  
+  mem_load_l3_hit_retired.xsnp_hitm                 
+  mem_load_l3_hit_retired.xsnp_miss                 
+  mem_load_l3_hit_retired.xsnp_none                 
